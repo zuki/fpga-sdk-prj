@@ -26,8 +26,8 @@ module max1000 (
     output                          DRAM_UDQM,  // DQM1
     output                          DRAM_WE_N,
 
-    output                          UART_RXD,   // -> UART
-    input                           UART_TXD,   // <- UART
+    output                          UART_TXD,   // -> UART
+    input                           UART_RXD,   // <- UART
     `ifdef SCR1_DBGC_EN
     input                           JTAG_TRST_N,
     input                           JTAG_TCK,
@@ -38,8 +38,8 @@ module max1000 (
     `endif//SCR1_DBGC_EN
 
     input                 [0:0]     RESET,
-    output                [7:0]     LED,
-    input                 [0:0]     SW
+    output                [7:0]     LED
+    //input                 [0:0]     SW
 );
 
 
@@ -238,8 +238,8 @@ uart_top i_uart(
         .wb_sel_i                   (4'd1                   ),
         .int_o                      (riscv0_irq             ),
 
-        .stx_pad_o                  (UART_RXD               ),
-        .srx_pad_i                  (UART_TXD               ),
+        .stx_pad_o                  (UART_TXD               ),
+        .srx_pad_i                  (UART_RXD               ),
 
         .rts_pad_o                  (                       ),
         .cts_pad_i                  ('1                     ),
@@ -315,7 +315,6 @@ max1000_qsys i_max1000_qsys (
 
 
         .pio_led_export             (LED                    ),
-        .pio_sw_export              (SW                     ),
         .bld_id_export              (FPGA_MAX1000_BUILD_ID  ),
 
         .uart_waitrequest           (uart_waitrequest       ),
