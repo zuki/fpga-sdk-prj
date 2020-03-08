@@ -28,18 +28,9 @@ module max1000 (
 
     output                          UART_TXD,   // -> UART
     input                           UART_RXD,   // <- UART
-    `ifdef SCR1_DBGC_EN
-    input                           JTAG_TRST_N,
-    input                           JTAG_TCK,
-    input                           JTAG_TMS,
-    input                           JTAG_TDI,
-    output                          JTAG_TDO,
 
-    `endif//SCR1_DBGC_EN
-
-    input                 [0:0]     RESET,
-    output                [7:0]     LED
-    //input                 [0:0]     SW
+    output                [7:0]     LED,
+    input                 [0:0]     RESET
 );
 
 
@@ -118,9 +109,6 @@ pll i_pll (
     .locked         (pll_locked     )
 );
 
-
-
-
 always_ff @(posedge clk_riscv, negedge rst_in)
 begin
     if (~rst_in)    rst_in_d <= '0;
@@ -146,9 +134,6 @@ scr1_top_ahb i_scr1 (
 
         // Fuses
         .fuse_mhartid               ('0                     ),
-`ifdef SCR1_DBGC_EN
-        .fuse_idcode                (`SCR1_TAP_IDCODE       ),
-`endif // SCR1_DBGC_EN
 
         // IRQ
         `ifdef SCR1_IPIC_EN
@@ -157,16 +142,6 @@ scr1_top_ahb i_scr1 (
         .ext_irq                    (riscv0_irq             ),
         `endif//SCR1_IPIC_EN
         .soft_irq                   ('0                     ),
-
-        `ifdef SCR1_DBGC_EN
-        // Debug Interface - JTAG I/F
-        .trst_n                     (JTAG_TRST_N            ),
-        .tck                        (JTAG_TCK               ),
-        .tms                        (JTAG_TMS               ),
-        .tdi                        (JTAG_TDI               ),
-        .tdo                        (riscv_jtag_tdo         ),
-        .tdo_en                     (riscv_jtag_tdo_en      ),
-        `endif//SCR1_DBGC_EN
 
         // Instruction Memory Interface
         .imem_hprot                 (ahb_imem_hprot         ),
@@ -191,64 +166,6 @@ scr1_top_ahb i_scr1 (
         .dmem_hrdata                (ahb_dmem_hrdata        ),
         .dmem_hresp                 (ahb_dmem_hresp         )
 );
-
-//
-// UART 16550 IP
-//
-logic [31:0]    uart_readdata;
-logic           uart_readdatavalid;
-logic [31:0]    uart_writedata;
-logic  [4:0]    uart_address;
-logic           uart_write;
-logic           uart_read;
-logic           uart_waitrequest;
-
-logic           wb_ack;
-logic  [7:0]    wb_dat;
-logic           read_valid;
-
-
-
-always_ff @(posedge clk_riscv, negedge rst_n)
-if (~rst_n)                 read_valid <= '0;
-    else if (wb_ack)        read_valid <= '0;
-    else if (uart_read)     read_valid <= '1;
-
-
-always_ff @(posedge clk_riscv) begin
-    uart_readdatavalid  <= wb_ack & read_valid;
-    uart_readdata       <= {24'd0,wb_dat};
-end
-
-
-assign uart_waitrequest = ~wb_ack;
-
-
-uart_top i_uart(
-        .wb_clk_i                   (clk_riscv              ),
-        // Wishbone signals
-        .wb_rst_i                   (~rst_n                 ),
-        .wb_adr_i                   (uart_address[4:2]      ),
-        .wb_dat_i                   (uart_writedata[7:0]    ),
-        .wb_dat_o                   (wb_dat                 ),
-        .wb_we_i                    (uart_write             ),
-        .wb_stb_i                   (read_valid|uart_write  ),
-        .wb_cyc_i                   (read_valid|uart_write  ),
-        .wb_ack_o                   (wb_ack                 ),
-        .wb_sel_i                   (4'd1                   ),
-        .int_o                      (riscv0_irq             ),
-
-        .stx_pad_o                  (UART_TXD               ),
-        .srx_pad_i                  (UART_RXD               ),
-
-        .rts_pad_o                  (                       ),
-        .cts_pad_i                  ('1                     ),
-        .dtr_pad_o                  (                       ),
-        .dsr_pad_i                  ('1                     ),
-        .ri_pad_i                   ('1                     ),
-        .dcd_pad_i                  ('1                     )
-        );
-
 
 //
 // AHB IMEM Bridge
@@ -310,23 +227,13 @@ ahb_avalon_bridge i_ahb_dmem (
 
 max1000_qsys i_max1000_qsys (
         .clk_clk                    (clk_riscv              ),
-        .clk_sdram_clk              (clk_sdram              ),
+        .clk_sdram_in_clk_clk       (clk_sdram              ),
         .reset_reset_n              (rst_n                  ),
 
 
         .pio_led_export             (LED                    ),
+        .pio_sw_export              (                       ),
         .bld_id_export              (FPGA_MAX1000_BUILD_ID  ),
-
-        .uart_waitrequest           (uart_waitrequest       ),
-        .uart_readdata              (uart_readdata          ),
-        .uart_readdatavalid         (uart_readdatavalid     ),
-        .uart_burstcount            (                       ),
-        .uart_writedata             (uart_writedata         ),
-        .uart_address               (uart_address           ),
-        .uart_write                 (uart_write             ),
-        .uart_read                  (uart_read              ),
-        .uart_byteenable            (                       ),
-        .uart_debugaccess           (                       ),
 
         .sdram_addr                 (DRAM_ADDR              ),
         .sdram_ba                   (DRAM_BA                ),
@@ -360,27 +267,11 @@ max1000_qsys i_max1000_qsys (
         .avl_dmem_writedata         (avl_dmem_writedata     ),
         .avl_dmem_readdatavalid     (avl_dmem_readdatavalid ),
         .avl_dmem_readdata          (avl_dmem_readdata      ),
-        .avl_dmem_response          (avl_dmem_response      )
+        .avl_dmem_response          (avl_dmem_response      ),
+
+        .uart_0_rxd                 (UART_RXD               ),
+        .uart_0_txd                 (UART_TXD               ),
+        .uart_0_irq_irq             (riscv0_irq             )
 );
-
-
-
-
-
-
-
-
-
-`ifdef SCR1_DBGC_EN
-    assign JTAG_TDO  = (riscv_jtag_tdo_en)? riscv_jtag_tdo : 1'bz;
-`else//SCR1_DBGC_EN
-    assign JTAG_TDO  = 1'bZ;
-`endif//SCR1_DBGC_EN
-
-
-
-
-
-
 
 endmodule: max1000

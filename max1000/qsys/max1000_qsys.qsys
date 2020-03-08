@@ -106,6 +106,11 @@
          value = "4";
          type = "int";
       }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
    }
    element onchip_ram.s1
    {
@@ -241,6 +246,22 @@
          type = "boolean";
       }
    }
+   element uart_0
+   {
+      datum _sortIndex
+      {
+         value = "14";
+         type = "int";
+      }
+   }
+   element uart_0.s1
+   {
+      datum baseAddress
+      {
+         value = "4278255616";
+         type = "String";
+      }
+   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="AUTO" />
@@ -270,7 +291,11 @@
    type="conduit"
    dir="end" />
  <interface name="clk" internal="clk.clk_in" type="clock" dir="end" />
- <interface name="clk_sdram" internal="clk_sdram.in_clk" type="clock" dir="end" />
+ <interface
+   name="clk_sdram_in_clk"
+   internal="clk_sdram.in_clk"
+   type="clock"
+   dir="end" />
  <interface name="pio_hex_1_0" internal="pio_hex_1_0.external_connection" />
  <interface name="pio_hex_3_2" internal="pio_hex_3_2.external_connection" />
  <interface name="pio_hex_5_4" internal="pio_hex_5_4.external_connection" />
@@ -282,7 +307,13 @@
  <interface name="pio_sw" internal="pio_sw.external_connection" />
  <interface name="reset" internal="clk.clk_in_reset" type="reset" dir="end" />
  <interface name="sdram" internal="sdram.wire" type="conduit" dir="end" />
- <interface name="uart" internal="avl_uart.m0" type="avalon" dir="start" />
+ <interface name="uart" internal="avl_uart.m0" />
+ <interface
+   name="uart_0"
+   internal="uart_0.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface name="uart_0_irq" internal="uart_0.irq" type="interrupt" dir="end" />
  <module
    name="avl_dmem"
    kind="altera_avalon_mm_bridge"
@@ -323,7 +354,7 @@
    name="avl_uart"
    kind="altera_avalon_mm_bridge"
    version="18.1"
-   enabled="1">
+   enabled="0">
   <parameter name="ADDRESS_UNITS" value="SYMBOLS" />
   <parameter name="ADDRESS_WIDTH" value="5" />
   <parameter name="DATA_WIDTH" value="32" />
@@ -396,8 +427,8 @@
   <parameter name="enPRInitMode" value="false" />
   <parameter name="enableDiffWidth" value="false" />
   <parameter name="initMemContent" value="true" />
-  <parameter name="initializationFileName">/home/vagrant/develop/riscv/scr1-sdk/fpga/max1000/ip/max1000.mif</parameter>
-  <parameter name="instanceID" value="NONE" />
+  <parameter name="initializationFileName">/home/vagrant/develop/riscv/scr1/max1000/ip/max1000.mif</parameter>
+  <parameter name="instanceID" value="bl" />
   <parameter name="memorySize" value="32768" />
   <parameter name="readDuringWriteMode" value="DONT_CARE" />
   <parameter name="resetrequest_enabled" value="false" />
@@ -521,6 +552,22 @@
   <parameter name="registerDataIn" value="true" />
   <parameter name="rowWidth" value="12" />
  </module>
+ <module name="uart_0" kind="altera_avalon_uart" version="18.1" enabled="1">
+  <parameter name="baud" value="115200" />
+  <parameter name="clockRate" value="20000000" />
+  <parameter name="dataBits" value="8" />
+  <parameter name="fixedBaud" value="true" />
+  <parameter name="parity" value="NONE" />
+  <parameter name="simCharStream" value="" />
+  <parameter name="simInteractiveInputEnable" value="false" />
+  <parameter name="simInteractiveOutputEnable" value="false" />
+  <parameter name="simTrueBaud" value="false" />
+  <parameter name="stopBits" value="1" />
+  <parameter name="syncRegDepth" value="2" />
+  <parameter name="useCtsRts" value="false" />
+  <parameter name="useEopRegister" value="false" />
+  <parameter name="useRelativePathForSimFile" value="false" />
+ </module>
  <connection
    kind="avalon"
    version="18.1"
@@ -594,6 +641,11 @@
   <parameter name="baseAddress" value="0xff020010" />
   <parameter name="defaultConnection" value="false" />
  </connection>
+ <connection kind="avalon" version="18.1" start="avl_dmem.m0" end="uart_0.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0xff010000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
  <connection kind="clock" version="18.1" start="clk.clk" end="bld_id.clk" />
  <connection kind="clock" version="18.1" start="clk.clk" end="pio_sw.clk" />
  <connection kind="clock" version="18.1" start="clk.clk" end="pio_led.clk" />
@@ -604,6 +656,7 @@
  <connection kind="clock" version="18.1" start="clk.clk" end="pio_hex_5_4.clk" />
  <connection kind="clock" version="18.1" start="clk.clk" end="pio_hex_3_2.clk" />
  <connection kind="clock" version="18.1" start="clk.clk" end="avl_uart.clk" />
+ <connection kind="clock" version="18.1" start="clk.clk" end="uart_0.clk" />
  <connection kind="clock" version="18.1" start="clk.clk" end="onchip_ram.clk1" />
  <connection kind="clock" version="18.1" start="clk_sdram.out_clk" end="sdram.clk" />
  <connection
@@ -645,6 +698,7 @@
    version="18.1"
    start="clk.clk_reset"
    end="avl_uart.reset" />
+ <connection kind="reset" version="18.1" start="clk.clk_reset" end="uart_0.reset" />
  <connection
    kind="reset"
    version="18.1"
