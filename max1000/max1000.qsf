@@ -216,17 +216,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../../scr1/src/core/scr1_core_top
 set_global_assignment -name SYSTEMVERILOG_FILE ../../scr1/src/core/scr1_clk_ctrl.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../scr1/src/core/primitives/scr1_reset_cells.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../scr1/src/core/primitives/scr1_cg.sv
-set_global_assignment -name VERILOG_FILE ip/uart/uart_wb.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_transmitter.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_top.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_tfifo.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_sync_flops.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_rfifo.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_regs.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_receiver.v
-set_global_assignment -name VERILOG_FILE ip/uart/uart_defines.v
-set_global_assignment -name VERILOG_FILE ip/uart/timescale.v
-set_global_assignment -name VERILOG_FILE ip/uart/raminfr.v
 set_global_assignment -name VERILOG_FILE ip/pll.v
 set_global_assignment -name QIP_FILE ip/pll.qip
 set_global_assignment -name SYSTEMVERILOG_FILE ip/ahb_avalon_bridge.sv

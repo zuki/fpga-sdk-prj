@@ -427,7 +427,7 @@
   <parameter name="enPRInitMode" value="false" />
   <parameter name="enableDiffWidth" value="false" />
   <parameter name="initMemContent" value="true" />
-  <parameter name="initializationFileName">/home/vagrant/develop/riscv/scr1/max1000/ip/max1000.mif</parameter>
+  <parameter name="initializationFileName">/home/vagrant/develop/riscv/scr1-sdk/fpga/max1000/ip/max1000.mif</parameter>
   <parameter name="instanceID" value="bl" />
   <parameter name="memorySize" value="32768" />
   <parameter name="readDuringWriteMode" value="DONT_CARE" />

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="max1000_qsys" kind="max1000_qsys" version="1.0" fabric="QSYS">
  <!-- Format version 18.1 625 (Future versions may contain additional information.) -->
- <!-- 2020.03.08.11:26:41 -->
+ <!-- 2020.03.08.12:21:58 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1583634400</value>
+  <value>1583637718</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -4053,7 +4053,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="initializationFileName">
    <type>java.lang.String</type>
-   <value>/home/vagrant/develop/riscv/scr1/max1000/ip/max1000.mif</value>
+   <value>/home/vagrant/develop/riscv/scr1-sdk/fpga/max1000/ip/max1000.mif</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -4264,7 +4264,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="derived_init_file_name">
    <type>java.lang.String</type>
-   <value>/home/vagrant/develop/riscv/scr1/max1000/ip/max1000.mif</value>
+   <value>/home/vagrant/develop/riscv/scr1-sdk/fpga/max1000/ip/max1000.mif</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
