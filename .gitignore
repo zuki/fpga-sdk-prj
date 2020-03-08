@@ -1,0 +1,8 @@
+max1000/output_files/*
+max1000/db/*
+max1000/incremental_db/*
+max1000/max1000qsys.sopcinfo
+max1000/qsys/.qsys_edit/*
+max1000/qsys/max1000_qsys/*
+max1000.mif
+max1000.hex
